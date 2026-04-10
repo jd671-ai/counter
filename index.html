@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Church Offering Count</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Global Banners ──────────────────────────────────────────────────── -->
+  <div id="offline-banner" class="offline-banner hidden">
+    No internet connection — changes will sync when reconnected
+  </div>
+  <div id="sunday-banner" class="sunday-banner hidden">
+    ⚠ Today is not Sunday. Proceed with caution.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 1 · Profile (Login / Register)                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-profile" class="screen">
+    <div class="screen-inner">
+      <div class="app-logo">
+        <div class="app-logo-icon">✝</div>
+        <h1 class="app-title">Offering Count</h1>
+        <p class="app-subtitle">Internal counting sheet</p>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab active" data-tab="login">Sign In</button>
+        <button class="tab" data-tab="register">Register</button>
+      </div>
+
+      <!-- Login -->
+      <div id="tab-login" class="tab-content">
+        <div class="form-group">
+          <label for="login-name-select">Your name</label>
+          <select id="login-name-select">
+            <option value="">— Select your name —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="login-pin">4-digit PIN</label>
+          <input type="password" id="login-pin" maxlength="4"
+                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
+                 autocomplete="current-password">
+        </div>
+        <p id="login-error" class="error-msg hidden"></p>
+        <button id="btn-signin" class="btn-primary btn-full">Sign In</button>
+        <p class="form-hint">No account yet? Switch to <strong>Register</strong> above.</p>
+      </div>
+
+      <!-- Register -->
+      <div id="tab-register" class="tab-content hidden">
+        <div class="form-group">
+          <label for="register-name">Full name</label>
+          <input type="text" id="register-name" maxlength="50"
+                 placeholder="e.g. Jane Smith" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="register-pin">Create 4-digit PIN</label>
+          <input type="password" id="register-pin" maxlength="4"
+                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
+                 autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label for="register-pin-confirm">Confirm PIN</label>
+          <input type="password" id="register-pin-confirm" maxlength="4"
+                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
+                 autocomplete="new-password">
+        </div>
+        <p id="register-error" class="error-msg hidden"></p>
+        <button id="btn-register" class="btn-primary btn-full">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 2 · Lobby (waiting for second counter)                         -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-lobby" class="screen hidden">
+    <div class="screen-inner">
+      <h2 class="screen-title">Today's Session</h2>
+      <p id="lobby-date" class="session-date"></p>
+
+      <div class="lobby-card">
+        <p class="lobby-label">Counters joined</p>
+        <div id="lobby-counters" class="lobby-counter-list"></div>
+      </div>
+
+      <div class="lobby-waiting">
+        <div class="spinner"></div>
+        <p>Waiting for the second counter to join…</p>
+      </div>
+
+      <button id="btn-signout-lobby" class="btn-link">Sign out</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 3 · Count Entry                                                -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-count" class="screen hidden">
+    <div class="screen-inner">
+
+      <header class="count-header">
+        <div>
+          <h2 class="screen-title">Your Count</h2>
+          <p id="count-user-name" class="count-user-name"></p>
+        </div>
+        <div id="other-counter-badge" class="other-badge"></div>
+      </header>
+
+      <!-- Bills -->
+      <section class="denom-section">
+        <h3 class="section-heading">Bills</h3>
+        <div class="denom-table">
+          <div class="denom-header">
+            <span>Denomination</span>
+            <span>Quantity</span>
+            <span>Total</span>
+          </div>
+          <div id="bills-rows"></div>
+          <div class="denom-subtotal">
+            <span>Bills subtotal</span>
+            <span></span>
+            <span id="bills-total">$0.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coins -->
+      <section class="denom-section">
+        <h3 class="section-heading">Coins</h3>
+        <div class="denom-table">
+          <div class="denom-header">
+            <span>Denomination</span>
+            <span>Quantity</span>
+            <span>Total</span>
+          </div>
+          <div id="coins-rows"></div>
+          <div class="denom-subtotal">
+            <span>Coins subtotal</span>
+            <span></span>
+            <span id="coins-total">$0.00</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="cash-total-bar">
+        <span>Cash Total</span>
+        <span id="cash-total" class="cash-total-value">$0.00</span>
+      </div>
+
+      <!-- Checks -->
+      <section class="denom-section">
+        <h3 class="section-heading">Checks</h3>
+        <p class="section-hint">
+          Either counter may add checks. The <em>other</em> counter must confirm each one.
+        </p>
+
+        <div class="add-check-row">
+          <input type="text" id="check-number-input" class="check-num-field"
+                 placeholder="Check #" maxlength="20">
+          <input type="number" id="check-amount-input" class="check-amt-field"
+                 placeholder="0.00" min="0" step="0.01">
+          <button id="btn-add-check" class="btn-secondary btn-sm">Add</button>
+        </div>
+
+        <div id="check-list" class="check-list">
+          <p class="empty-msg">No checks added yet.</p>
+        </div>
+
+        <div class="checks-total-bar">
+          <span>Checks Total</span>
+          <span id="checks-total-count" class="cash-total-value">$0.00</span>
+        </div>
+      </section>
+
+      <!-- Lock -->
+      <div class="lock-section">
+        <button id="btn-lock" class="btn-primary btn-full btn-lock">
+          Lock My Count
+        </button>
+        <p id="lock-waiting-msg" class="waiting-msg hidden">
+          ✓ Your count is locked. Waiting for the other counter to lock…
+        </p>
+      </div>
+
+      <p id="count-error" class="error-msg hidden"></p>
+      <button id="btn-signout-count" class="btn-link">Sign out</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 4 · Comparison                                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-compare" class="screen hidden">
+    <div class="screen-inner">
+      <h2 class="screen-title">Count Comparison</h2>
+      <p id="compare-date" class="session-date"></p>
+
+      <div id="compare-summary" class="compare-summary"></div>
+
+      <!-- Bills -->
+      <section class="denom-section">
+        <h3 class="section-heading">Bills</h3>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Denom</th>
+                <th id="cmp-name-a" colspan="2" class="cmp-name-a"></th>
+                <th id="cmp-name-b" colspan="2" class="cmp-name-b"></th>
+                <th rowspan="2">Match</th>
+              </tr>
+              <tr>
+                <th>Qty</th><th>Total</th>
+                <th>Qty</th><th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="compare-bills-body"></tbody>
+            <tfoot>
+              <tr id="compare-bills-foot" class="subtotal-row">
+                <td>Bills Total</td>
+                <td></td><td id="cmp-bills-total-a"></td>
+                <td></td><td id="cmp-bills-total-b"></td>
+                <td id="cmp-bills-match"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- Coins -->
+      <section class="denom-section">
+        <h3 class="section-heading">Coins</h3>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Denom</th>
+                <th id="cmp-name-a-coins" colspan="2" class="cmp-name-a"></th>
+                <th id="cmp-name-b-coins" colspan="2" class="cmp-name-b"></th>
+                <th rowspan="2">Match</th>
+              </tr>
+              <tr>
+                <th>Qty</th><th>Total</th>
+                <th>Qty</th><th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="compare-coins-body"></tbody>
+            <tfoot>
+              <tr id="compare-coins-foot" class="subtotal-row">
+                <td>Coins Total</td>
+                <td></td><td id="cmp-coins-total-a"></td>
+                <td></td><td id="cmp-coins-total-b"></td>
+                <td id="cmp-coins-match"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- Cash total row -->
+      <div id="compare-cash-totals" class="compare-grand-cash"></div>
+
+      <!-- Checks -->
+      <section class="denom-section">
+        <h3 class="section-heading">Checks</h3>
+        <div id="compare-check-list" class="check-list read-only">
+          <p class="empty-msg">No checks were recorded.</p>
+        </div>
+        <div class="checks-total-bar">
+          <span>Checks Total</span>
+          <span id="compare-checks-total" class="cash-total-value">$0.00</span>
+        </div>
+      </section>
+
+      <div class="grand-total-bar">
+        <span>Grand Total</span>
+        <span id="compare-grand-total" class="grand-total-value">$0.00</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="compare-actions">
+        <p id="submit-status-msg" class="waiting-msg"></p>
+        <button id="btn-submit" class="btn-primary btn-full hidden">
+          Submit Offering
+        </button>
+        <button id="btn-unlock" class="btn-secondary btn-full">
+          Unlock My Count
+        </button>
+      </div>
+
+      <p id="compare-error" class="error-msg hidden"></p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN 5 · Submitted                                                  -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-submitted" class="screen hidden">
+    <div class="screen-inner submitted-inner">
+      <div class="submitted-check">✓</div>
+      <h2 class="submitted-title">Submitted!</h2>
+      <p id="submitted-date" class="session-date"></p>
+      <div class="submitted-card">
+        <p class="submitted-counters-label">Counted by</p>
+        <p id="submitted-counters" class="submitted-counters"></p>
+        <div class="submitted-divider"></div>
+        <p class="submitted-total-label">Grand Total</p>
+        <p id="submitted-grand-total" class="submitted-grand-total"></p>
+      </div>
+      <p class="submitted-note">
+        An email has been sent to the treasurer.
+      </p>
+      <button id="btn-done" class="btn-secondary">Done / Sign Out</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
