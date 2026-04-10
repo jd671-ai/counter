@@ -8,11 +8,11 @@
 // 5. In Firestore Database → Rules, publish the open rules in SETUP.md
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const firebaseConfig = {
-  apiKey:            "AIzaSyDVShP6Y-qsPbH-2oPh1_bX8e-iaLUOP8c",
-  authDomain:        "church-counter-61362.firebaseapp.com",
-  projectId:         "church-counter-61362",
-  storageBucket:     "church-counter-61362.firebasestorage.app",
-  messagingSenderId: "647029674068",
-  appId:             "1:647029674068:web:3a56d0be2e5b5b6a059dc1"
+const firebaseConfig = {
+  apiKey: "AIzaSyDRZbVipmtfNC00TSgQp022TZXkzWvMurw",
+  authDomain: "church-counter-a560f.firebaseapp.com",
+  projectId: "church-counter-a560f",
+  storageBucket: "church-counter-a560f.firebasestorage.app",
+  messagingSenderId: "176020853599",
+  appId: "1:176020853599:web:b0f7d9349ac7f5c6bf5cea"
 };

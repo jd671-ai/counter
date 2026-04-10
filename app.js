@@ -7,9 +7,9 @@ import {
 import { firebaseConfig } from './firebase-config.js';
 
 // ─── Config (fill in after EmailJS setup) ────────────────────────────────────
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY  = 'xIicYRDTu2HLulENo';
+const EMAILJS_SERVICE_ID  = 'service_nwil4a1';
+const EMAILJS_TEMPLATE_ID = 'template_gukzkye';
 const TREASURER_EMAIL     = 'jd.ccclv@gmail.com';
 
 // ─── Denominations ────────────────────────────────────────────────────────────
@@ -40,54 +40,18 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 // ─── App State ────────────────────────────────────────────────────────────────
-let currentUser        = null;   // { id, name }
+let currentUser        = null;   // { id, name, deviceToken }
 let sessionId          = null;   // YYYY-MM-DD string
 let unsubscribeSession = null;   // Firestore onSnapshot cleanup fn
 let countScreenBuilt   = false;  // denomination rows rendered once
 let saveTimer          = null;   // debounce handle for count autosave
 let lastSessionData    = null;   // latest snapshot for email / comparison
 let submitInProgress   = false;  // prevents double-submit
+let lastSeenReset      = 0;      // tracks resetCount so other device's reset triggers rebuild
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// AUTH
+// USER SESSION STORAGE (page-refresh rejoin)
 // ═══════════════════════════════════════════════════════════════════════════════
-
-async function hashPin(pin) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function getProfiles() {
-  return JSON.parse(localStorage.getItem('churchCounter_profiles') || '[]');
-}
-
-function saveProfiles(profiles) {
-  localStorage.setItem('churchCounter_profiles', JSON.stringify(profiles));
-}
-
-async function registerUser(name, pin, pinConfirm) {
-  name = name.trim();
-  if (!name)                        return { ok: false, err: 'Please enter your name.' };
-  if (!/^\d{4}$/.test(pin))        return { ok: false, err: 'PIN must be exactly 4 digits.' };
-  if (pin !== pinConfirm)           return { ok: false, err: 'PINs do not match.' };
-  const profiles = getProfiles();
-  if (profiles.some(p => p.name.toLowerCase() === name.toLowerCase()))
-    return { ok: false, err: 'That name is already registered on this device.' };
-  const pinHash = await hashPin(pin);
-  profiles.push({ id: crypto.randomUUID(), name, pinHash });
-  saveProfiles(profiles);
-  return { ok: true };
-}
-
-async function loginUser(name, pin) {
-  if (!name) return { ok: false, err: 'Please select your name.' };
-  if (!pin)  return { ok: false, err: 'Please enter your PIN.' };
-  const profile = getProfiles().find(p => p.name === name);
-  if (!profile) return { ok: false, err: 'Profile not found.' };
-  const pinHash = await hashPin(pin);
-  if (pinHash !== profile.pinHash) return { ok: false, err: 'Incorrect PIN. Try again.' };
-  return { ok: true, user: { id: profile.id, name: profile.name } };
-}
 
 function storeCurrentUser(user) {
   sessionStorage.setItem('churchCounter_user', JSON.stringify(user));
@@ -119,18 +83,35 @@ async function getOrCreateSession(sid) {
 }
 
 async function joinSession(sid, user) {
-  const ref = doc(db, 'sessions', sid);
+  const ref  = doc(db, 'sessions', sid);
   const snap = await getDoc(ref);
-  if (snap.exists()) {
-    const data = snap.data();
-    const ids = Object.keys(data.counters || {});
-    // Block a third person from joining
-    if (ids.length >= 2 && !ids.includes(user.id)) {
-      return { ok: false, err: 'This session already has 2 counters. Please wait until next Sunday.' };
+  const data = snap.exists() ? snap.data() : { counters: {} };
+  const ids  = Object.keys(data.counters || {});
+  const existing = data.counters?.[user.id];
+
+  if (existing) {
+    // This user's slot already exists in the session.
+    // Block if another device is already active (different deviceToken).
+    if (existing.deviceToken && existing.deviceToken !== user.deviceToken) {
+      return {
+        ok: false,
+        err: `${user.name} is already signed in on another device. Sign out there first, then try again.`,
+      };
     }
+    // Same device rejoining (page refresh) — refresh token only, keep counts & locked intact.
+    await updateDoc(ref, { [`counters.${user.id}.deviceToken`]: user.deviceToken });
+    return { ok: true };
   }
+
+  // New user — block a third person from joining.
+  if (ids.length >= 2) {
+    return { ok: false, err: 'This session already has 2 counters. Please wait until next Sunday.' };
+  }
+
   await updateDoc(ref, {
-    [`counters.${user.id}`]: { name: user.name, locked: false, counts: null },
+    [`counters.${user.id}`]: {
+      name: user.name, locked: false, counts: null, deviceToken: user.deviceToken,
+    },
   });
   return { ok: true };
 }
@@ -195,6 +176,27 @@ async function unlockMyCount() {
     [`counters.${currentUser.id}.locked`]: false,
   });
   countScreenBuilt = false; // rebuild table on next render
+}
+
+async function resetSession() {
+  const ref  = doc(db, 'sessions', sessionId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+
+  const data    = snap.data();
+  const ids     = getCounterIds(data);
+  const newReset = (data.resetCount || 0) + 1;
+
+  // Clear counts, checks, and locks — keep both counters in the session
+  const update = { checks: [], status: 'counting', resetCount: newReset };
+  ids.forEach(id => {
+    update[`counters.${id}.locked`] = false;
+    update[`counters.${id}.counts`] = null;
+  });
+
+  clearTimeout(saveTimer);
+  await updateDoc(ref, update);
+  // onSnapshot fires on both devices; renderCountScreen detects resetCount change and rebuilds
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -380,74 +382,6 @@ function formatDateLabel(sid) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// UI: PROFILE SCREEN
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function setupProfileScreen() {
-  // Tab switching
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.tab;
-      document.getElementById('tab-login').classList.toggle('hidden', target !== 'login');
-      document.getElementById('tab-register').classList.toggle('hidden', target !== 'register');
-      clearErrorIn('login-error');
-      clearErrorIn('register-error');
-    });
-  });
-
-  populateNameDropdown();
-
-  // Sign in
-  document.getElementById('btn-signin').addEventListener('click', async () => {
-    clearErrorIn('login-error');
-    const name = document.getElementById('login-name-select').value;
-    const pin  = document.getElementById('login-pin').value;
-    const btn  = document.getElementById('btn-signin');
-    btn.disabled = true;
-    const result = await loginUser(name, pin);
-    btn.disabled = false;
-    if (!result.ok) { showErrorIn('login-error', result.err); return; }
-    document.getElementById('login-pin').value = '';
-    await startSession(result.user);
-  });
-
-  // Allow Enter key on PIN input
-  document.getElementById('login-pin').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('btn-signin').click();
-  });
-
-  // Register
-  document.getElementById('btn-register').addEventListener('click', async () => {
-    clearErrorIn('register-error');
-    const name    = document.getElementById('register-name').value;
-    const pin     = document.getElementById('register-pin').value;
-    const confirm = document.getElementById('register-pin-confirm').value;
-    const btn     = document.getElementById('btn-register');
-    btn.disabled  = true;
-    const result  = await registerUser(name, pin, confirm);
-    btn.disabled  = false;
-    if (!result.ok) { showErrorIn('register-error', result.err); return; }
-    // Clear form, switch to login, pre-select new name
-    document.getElementById('register-name').value        = '';
-    document.getElementById('register-pin').value         = '';
-    document.getElementById('register-pin-confirm').value = '';
-    populateNameDropdown();
-    document.querySelector('[data-tab="login"]').click();
-    const sel = document.getElementById('login-name-select');
-    sel.value = name;
-  });
-}
-
-function populateNameDropdown() {
-  const sel = document.getElementById('login-name-select');
-  const profiles = getProfiles();
-  sel.innerHTML = '<option value="">— Select your name —</option>' +
-    profiles.map(p => `<option value="${escHtml(p.name)}">${escHtml(p.name)}</option>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
 // UI: LOBBY SCREEN
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -561,8 +495,10 @@ function renderCountScreen(data) {
     badge.className    = 'other-badge' + (other.locked ? ' locked' : '');
   }
 
-  // Build table only on first visit (preserves input values)
-  if (!countScreenBuilt) {
+  // Build table on first visit OR when the other device triggered a reset
+  const sessionReset = data.resetCount || 0;
+  if (!countScreenBuilt || sessionReset > lastSeenReset) {
+    lastSeenReset = sessionReset;
     buildDenomTable();
     setupCountInputListeners();
     if (myData.counts) prefillCountsToForm(myData.counts);
@@ -800,8 +736,11 @@ function handleSessionUpdate(data) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function startSession(user) {
-  currentUser = user;
-  storeCurrentUser(user);
+  // Reuse id/deviceToken on page-refresh rejoin; generate fresh ones on new join.
+  const id          = user.id          || crypto.randomUUID();
+  const deviceToken = user.deviceToken || crypto.randomUUID();
+  currentUser = { id, name: user.name, deviceToken };
+  storeCurrentUser(currentUser);
   sessionId   = getTodayId();
 
   showScreen('screen-lobby');
@@ -814,14 +753,14 @@ async function startSession(user) {
       clearCurrentUser();
       currentUser = null;
       showScreen('screen-profile');
-      showErrorIn('login-error', joinResult.err);
+      showErrorIn('entry-error', joinResult.err);
       return;
     }
   } catch (e) {
     clearCurrentUser();
     currentUser = null;
     showScreen('screen-profile');
-    showErrorIn('login-error', 'Could not connect to Firebase. Check your internet and config.');
+    showErrorIn('entry-error', 'Could not connect to Firebase. Check your internet and config.');
     console.error(e);
     return;
   }
@@ -840,8 +779,8 @@ function signOut() {
   lastSessionData  = null;
   countScreenBuilt = false;
   submitInProgress = false;
+  lastSeenReset    = 0;
   showScreen('screen-profile');
-  populateNameDropdown();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -876,10 +815,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('offline', updateOnlineBanner);
   updateOnlineBanner();
 
-  // Profile screen setup
-  setupProfileScreen();
+  // Name entry — join session
+  const btnJoin = document.getElementById('btn-join');
+  document.getElementById('entry-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') btnJoin.click();
+  });
+  btnJoin.addEventListener('click', async () => {
+    const name = document.getElementById('entry-name').value.trim();
+    if (!name) { showErrorIn('entry-error', 'Please enter your name.'); return; }
+    clearErrorIn('entry-error');
+    btnJoin.disabled = true;
+    await startSession({ name });
+    btnJoin.disabled = false;
+  });
 
-  // Sign-out buttons
+  // Start Over buttons
   document.getElementById('btn-signout-lobby').addEventListener('click', signOut);
   document.getElementById('btn-signout-count').addEventListener('click', signOut);
 
@@ -935,6 +885,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     await submitOffering();
     document.getElementById('btn-submit').disabled = false;
   });
+
+  // Reset session (count screen and compare screen share one handler)
+  async function handleReset() {
+    if (!confirm('Reset the entire count session?\n\nThis will clear ALL entered quantities, checks, and locks for both counters. This cannot be undone.')) return;
+    const btn = document.getElementById('btn-reset-count') || document.getElementById('btn-reset-compare');
+    if (btn) btn.disabled = true;
+    try { await resetSession(); }
+    catch (e) {
+      showErrorIn('count-error', 'Could not reset the session. Check connection and try again.');
+      if (btn) btn.disabled = false;
+    }
+  }
+  document.getElementById('btn-reset-count').addEventListener('click', handleReset);
+  document.getElementById('btn-reset-compare').addEventListener('click', handleReset);
 
   // Done / sign out from submitted screen
   document.getElementById('btn-done').addEventListener('click', signOut);

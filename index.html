@@ -18,7 +18,7 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN 1 · Profile (Login / Register)                                 -->
+  <!-- SCREEN 1 · Name Entry                                                 -->
   <!-- ══════════════════════════════════════════════════════════════════════ -->
   <div id="screen-profile" class="screen">
     <div class="screen-inner">
@@ -28,52 +28,13 @@
         <p class="app-subtitle">Internal counting sheet</p>
       </div>
 
-      <div class="tab-bar">
-        <button class="tab active" data-tab="login">Sign In</button>
-        <button class="tab" data-tab="register">Register</button>
+      <div class="form-group">
+        <label for="entry-name">Your name</label>
+        <input type="text" id="entry-name" maxlength="50"
+               placeholder="e.g. Jane Smith" autocomplete="name">
       </div>
-
-      <!-- Login -->
-      <div id="tab-login" class="tab-content">
-        <div class="form-group">
-          <label for="login-name-select">Your name</label>
-          <select id="login-name-select">
-            <option value="">— Select your name —</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="login-pin">4-digit PIN</label>
-          <input type="password" id="login-pin" maxlength="4"
-                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
-                 autocomplete="current-password">
-        </div>
-        <p id="login-error" class="error-msg hidden"></p>
-        <button id="btn-signin" class="btn-primary btn-full">Sign In</button>
-        <p class="form-hint">No account yet? Switch to <strong>Register</strong> above.</p>
-      </div>
-
-      <!-- Register -->
-      <div id="tab-register" class="tab-content hidden">
-        <div class="form-group">
-          <label for="register-name">Full name</label>
-          <input type="text" id="register-name" maxlength="50"
-                 placeholder="e.g. Jane Smith" autocomplete="name">
-        </div>
-        <div class="form-group">
-          <label for="register-pin">Create 4-digit PIN</label>
-          <input type="password" id="register-pin" maxlength="4"
-                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
-                 autocomplete="new-password">
-        </div>
-        <div class="form-group">
-          <label for="register-pin-confirm">Confirm PIN</label>
-          <input type="password" id="register-pin-confirm" maxlength="4"
-                 inputmode="numeric" pattern="\d{4}" placeholder="••••"
-                 autocomplete="new-password">
-        </div>
-        <p id="register-error" class="error-msg hidden"></p>
-        <button id="btn-register" class="btn-primary btn-full">Register</button>
-      </div>
+      <p id="entry-error" class="error-msg hidden"></p>
+      <button id="btn-join" class="btn-primary btn-full">Join Session</button>
     </div>
   </div>
 
@@ -95,7 +56,7 @@
         <p>Waiting for the second counter to join…</p>
       </div>
 
-      <button id="btn-signout-lobby" class="btn-link">Sign out</button>
+      <button id="btn-signout-lobby" class="btn-link">Start Over</button>
     </div>
   </div>
 
@@ -190,7 +151,8 @@
       </div>
 
       <p id="count-error" class="error-msg hidden"></p>
-      <button id="btn-signout-count" class="btn-link">Sign out</button>
+      <button id="btn-reset-count" class="btn-danger btn-full">Reset Session</button>
+      <button id="btn-signout-count" class="btn-link">Start Over</button>
     </div>
   </div>
 
@@ -292,6 +254,9 @@
         </button>
         <button id="btn-unlock" class="btn-secondary btn-full">
           Unlock My Count
+        </button>
+        <button id="btn-reset-compare" class="btn-danger btn-full">
+          Reset Session
         </button>
       </div>
 
