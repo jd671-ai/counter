@@ -221,7 +221,6 @@ function getDenomMismatches(data) {
                    .map(d => d.key);
 }
 
-function allMatch(data) { return getDenomMismatches(data).length === 0; }
 
 function allChecksConfirmed(data) {
   const checks = data.checks || [];
@@ -748,7 +747,7 @@ async function startSession(user) {
 
   try {
     await getOrCreateSession(sessionId);
-    const joinResult = await joinSession(sessionId, user);
+    const joinResult = await joinSession(sessionId, currentUser);
     if (!joinResult.ok) {
       clearCurrentUser();
       currentUser = null;
@@ -757,11 +756,11 @@ async function startSession(user) {
       return;
     }
   } catch (e) {
+    console.error('[startSession] Firebase error:', e);
     clearCurrentUser();
     currentUser = null;
     showScreen('screen-profile');
-    showErrorIn('entry-error', 'Could not connect to Firebase. Check your internet and config.');
-    console.error(e);
+    showErrorIn('entry-error', 'Firebase error: ' + e.message);
     return;
   }
 
@@ -825,7 +824,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!name) { showErrorIn('entry-error', 'Please enter your name.'); return; }
     clearErrorIn('entry-error');
     btnJoin.disabled = true;
-    await startSession({ name });
+    try {
+      await startSession({ name });
+    } catch (e) {
+      console.error('Unhandled error in startSession:', e);
+      showErrorIn('entry-error', 'Unexpected error: ' + e.message);
+    }
     btnJoin.disabled = false;
   });
 

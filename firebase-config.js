@@ -8,7 +8,7 @@
 // 5. In Firestore Database → Rules, publish the open rules in SETUP.md
 // ─────────────────────────────────────────────────────────────────────────────
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDRZbVipmtfNC00TSgQp022TZXkzWvMurw",
   authDomain: "church-counter-a560f.firebaseapp.com",
   projectId: "church-counter-a560f",
