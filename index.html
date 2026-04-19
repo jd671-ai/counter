@@ -13,9 +13,6 @@
   <div id="offline-banner" class="offline-banner hidden">
     No internet connection — changes will sync when reconnected
   </div>
-  <div id="sunday-banner" class="sunday-banner hidden">
-    ⚠ Today is not Sunday. Proceed with caution.
-  </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════ -->
   <!-- SCREEN 1 · Name Entry                                                 -->
@@ -23,7 +20,7 @@
   <div id="screen-profile" class="screen">
     <div class="screen-inner">
       <div class="app-logo">
-        <div class="app-logo-icon">✝</div>
+        <img src="CornerstoneLogo.jpg" alt="Cornerstone Logo" class="app-logo-img">
         <h1 class="app-title">Offering Count</h1>
         <p class="app-subtitle">Internal counting sheet</p>
       </div>
@@ -31,10 +28,13 @@
       <div class="form-group">
         <label for="entry-name">Your name</label>
         <input type="text" id="entry-name" maxlength="50"
-               placeholder="e.g. Jane Smith" autocomplete="name">
+               placeholder="e.g. Penny Divine" autocomplete="name">
       </div>
       <p id="entry-error" class="error-msg hidden"></p>
       <button id="btn-join" class="btn-primary btn-full">Join Session</button>
+      <p class="clear-hint">Having trouble? Clear all counters to start fresh.</p>
+      <button id="btn-clear-profile" class="btn-danger btn-full">Clear All Counters</button>
+      <a href="instructions.html" target="_blank" class="instructions-link">📋 View Instructions</a>
     </div>
   </div>
 
@@ -56,6 +56,7 @@
         <p>Waiting for the second counter to join…</p>
       </div>
 
+      <button id="btn-clear-lobby" class="btn-danger btn-full">Clear All Counters</button>
       <button id="btn-signout-lobby" class="btn-link">Start Over</button>
     </div>
   </div>
@@ -124,9 +125,9 @@
 
         <div class="add-check-row">
           <input type="text" id="check-number-input" class="check-num-field"
-                 placeholder="Check #" maxlength="20">
-          <input type="number" id="check-amount-input" class="check-amt-field"
-                 placeholder="0.00" min="0" step="0.01">
+                 placeholder="Check #" maxlength="20" inputmode="numeric" pattern="[0-9]*">
+          <input type="text" id="check-amount-input" class="check-amt-field"
+                 placeholder="0.00" inputmode="decimal" pattern="[0-9.]*">
           <button id="btn-add-check" class="btn-secondary btn-sm">Add</button>
         </div>
 
@@ -140,6 +141,11 @@
         </div>
       </section>
 
+      <div class="grand-total-bar">
+        <span>Grand Total</span>
+        <span id="count-grand-total" class="grand-total-value">$0.00</span>
+      </div>
+
       <!-- Lock -->
       <div class="lock-section">
         <button id="btn-lock" class="btn-primary btn-full btn-lock">
@@ -152,6 +158,7 @@
 
       <p id="count-error" class="error-msg hidden"></p>
       <button id="btn-reset-count" class="btn-danger btn-full">Reset Session</button>
+      <button id="btn-clear-count" class="btn-danger btn-full" style="margin-top:8px">Clear All Counters</button>
       <button id="btn-signout-count" class="btn-link">Start Over</button>
     </div>
   </div>
@@ -232,7 +239,7 @@
       <!-- Checks -->
       <section class="denom-section">
         <h3 class="section-heading">Checks</h3>
-        <div id="compare-check-list" class="check-list read-only">
+        <div id="compare-check-list" class="check-list">
           <p class="empty-msg">No checks were recorded.</p>
         </div>
         <div class="checks-total-bar">
@@ -258,6 +265,9 @@
         <button id="btn-reset-compare" class="btn-danger btn-full">
           Reset Session
         </button>
+        <button id="btn-clear-compare" class="btn-danger btn-full" style="margin-top:8px">
+          Clear All Counters
+        </button>
       </div>
 
       <p id="compare-error" class="error-msg hidden"></p>
@@ -280,14 +290,19 @@
         <p id="submitted-grand-total" class="submitted-grand-total"></p>
       </div>
       <p class="submitted-note">
-        An email has been sent to the treasurer.
+        An email has been sent to Thomas.
       </p>
-      <button id="btn-done" class="btn-secondary">Done / Sign Out</button>
+      <div class="submitted-actions">
+        <button id="btn-download-image" class="btn-primary btn-full">Save Count Sheet Image</button>
+        <button id="btn-text-thomas" class="btn-secondary btn-full">Text Thomas</button>
+        <button id="btn-done" class="btn-secondary">Done / Sign Out</button>
+      </div>
     </div>
   </div>
 
 </div><!-- #app -->
 
-<script type="module" src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module" src="app.js?v=2"></script>
 </body>
 </html>
