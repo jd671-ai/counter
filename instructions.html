@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offering Count — User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #2d5a8e;
+      --primary-lt: #eef3fa;
+      --success:    #1e7a3c;
+      --success-lt: #edf7f1;
+      --warn:       #8a6800;
+      --warn-lt:    #fefaec;
+      --danger:     #c0392b;
+      --danger-lt:  #fdf1f0;
+      --border:     #e0ddd5;
+      --text:       #1a1a1a;
+      --muted:      #555;
+      --bg:         #f5f5f0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text);
+      font-size: 15px; line-height: 1.65;
+      padding: 32px 16px 64px;
+    }
+
+    .page { max-width: 720px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .guide-header {
+      text-align: center; padding: 28px 24px 24px;
+      background: var(--primary); color: #fff;
+      border-radius: 12px; margin-bottom: 32px;
+    }
+    .guide-header .cross { font-size: 2rem; margin-bottom: 8px; }
+    .guide-header h1 { font-size: 1.6rem; font-weight: 800; }
+    .guide-header p  { opacity: .85; font-size: .95rem; margin-top: 6px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: .7rem; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--primary);
+      border-bottom: 2px solid var(--primary-lt);
+      padding-bottom: 6px; margin-bottom: 14px;
+    }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .step-num {
+      flex-shrink: 0; width: 28px; height: 28px;
+      border-radius: 50%; background: var(--primary); color: #fff;
+      font-size: .8rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-body { flex: 1; }
+    .step-body strong { display: block; font-size: .95rem; margin-bottom: 3px; }
+    .step-body p, .step-body ul { font-size: .88rem; color: var(--muted); }
+    .step-body ul { padding-left: 18px; margin-top: 4px; }
+    .step-body ul li { margin-bottom: 3px; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: 10px; padding: 14px 16px;
+      font-size: .88rem; margin-bottom: 12px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .callout .icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.4; }
+    .callout-body strong { display: block; margin-bottom: 3px; font-size: .9rem; }
+    .callout-body p, .callout-body ul { color: var(--muted); }
+    .callout-body ul { padding-left: 16px; margin-top: 4px; }
+    .callout-body ul li { margin-bottom: 3px; }
+    .callout.info    { background: var(--primary-lt); border: 1px solid #c5d9f0; }
+    .callout.success { background: var(--success-lt); border: 1px solid #a8d5bb; }
+    .callout.warn    { background: var(--warn-lt);    border: 1px solid #e6d080; }
+    .callout.danger  { background: var(--danger-lt);  border: 1px solid #f5b8b3; }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      margin: 8px 0 16px;
+    }
+    .flow-box {
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 9px 20px;
+      font-size: .85rem; font-weight: 600; text-align: center;
+      min-width: 220px;
+    }
+    .flow-box.green  { border-color: #a8d5bb; background: var(--success-lt); color: var(--success); }
+    .flow-box.blue   { border-color: #c5d9f0; background: var(--primary-lt); color: var(--primary); }
+    .flow-box.red    { border-color: #f5b8b3; background: var(--danger-lt);  color: var(--danger);  }
+    .flow-box.gold   { border-color: #e6d080; background: var(--warn-lt);    color: var(--warn);    }
+    .flow-arrow { font-size: 1.2rem; color: var(--muted); line-height: 1.4; }
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; margin-top: 8px; }
+    th { background: var(--primary-lt); color: var(--primary); font-weight: 700;
+         padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+    td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Print ── */
+    .print-btn {
+      display: block; margin: 0 auto 32px; padding: 12px 28px;
+      background: var(--primary); color: #fff; border: none;
+      border-radius: 8px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-align: center;
+    }
+    .print-btn:hover { background: #1e3f63; }
+    @media print {
+      body { background: #fff; padding: 16px; }
+      .print-btn { display: none; }
+      .step, .callout, .flow-box, .mockup-wrap { break-inside: avoid; }
+    }
+
+    /* ════════════════════════════════════════
+       MOCKUP STYLES
+    ════════════════════════════════════════ */
+    .mockup-wrap {
+      margin: 14px 0 4px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .mockup-label {
+      background: #f0f0ea; border-bottom: 1px solid var(--border);
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 5px 14px;
+    }
+    .mockup-body { padding: 14px 16px; }
+
+    /* Phone frame wrapper */
+    .phone-row {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      justify-content: center; margin: 14px 0 4px;
+    }
+    .phone-frame {
+      background: #1a1a1a; border-radius: 28px;
+      padding: 10px 8px 12px; width: 200px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+      flex-shrink: 0;
+    }
+    .phone-notch {
+      width: 60px; height: 8px; background: #333;
+      border-radius: 4px; margin: 0 auto 8px;
+    }
+    .phone-screen {
+      background: var(--bg); border-radius: 18px;
+      overflow: hidden; font-size: 8px; line-height: 1.4;
+    }
+    .phone-screen .ps-header {
+      background: var(--primary); color: #fff;
+      padding: 8px 10px 6px; text-align: center;
+    }
+    .phone-screen .ps-header .cross { font-size: 10px; }
+    .phone-screen .ps-header h2 { font-size: 9px; font-weight: 800; }
+    .phone-screen .ps-header p  { font-size: 7px; opacity: .8; }
+    .phone-screen .ps-body { padding: 8px 10px; }
+    .phone-label { font-size: 7px; font-weight: 700; margin-bottom: 3px; color: var(--text); }
+    .phone-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 4px;
+      padding: 4px 6px; font-size: 7.5px; color: var(--text);
+      background: #fff; margin-bottom: 8px;
+    }
+    .phone-btn {
+      display: block; width: 100%; text-align: center;
+      padding: 5px; border-radius: 5px;
+      font-size: 7.5px; font-weight: 700; margin-bottom: 5px;
+    }
+    .phone-btn.primary { background: var(--primary); color: #fff; }
+    .phone-btn.danger  { background: #fff; color: var(--danger); border: 1px solid var(--danger); }
+    .phone-hint { font-size: 6.5px; color: var(--muted); text-align: center; margin: 3px 0 4px; }
+    .phone-link { font-size: 7px; color: var(--primary); text-align: center; display: block; margin-top: 4px; }
+
+    /* Lobby screen */
+    .phone-lobby-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 5px; padding: 6px 8px; margin-bottom: 6px;
+    }
+    .phone-lobby-title { font-size: 6px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .phone-counter-row { display: flex; align-items: center; gap: 4px; margin-bottom: 3px; font-size: 7.5px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .dot.green  { background: var(--success); }
+    .dot.gray   { background: var(--border); }
+    .phone-you  { font-size: 6px; color: var(--muted); }
+    .phone-spin-row { text-align: center; padding: 6px 0 4px; color: var(--muted); font-size: 7px; }
+
+    /* Denomination table */
+    .mock-denom-hdr {
+      display: grid; grid-template-columns: 1fr 44px 54px;
+      background: var(--primary-lt); padding: 4px 6px;
+      font-size: 6px; font-weight: 700; text-transform: uppercase; color: var(--primary);
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-denom-hdr span:nth-child(2),
+    .mock-denom-hdr span:nth-child(3) { text-align: right; }
+    .mock-denom-row {
+      display: grid; grid-template-columns: 1fr 44px 54px;
+      padding: 3px 6px; border-bottom: 1px solid #f0ede8;
+      align-items: center; font-size: 7px;
+    }
+    .mock-qty-input {
+      border: 1px solid var(--border); border-radius: 3px;
+      padding: 2px 4px; font-size: 7px; text-align: right;
+      width: 40px; justify-self: end;
+    }
+    .mock-total { text-align: right; font-size: 7px; color: var(--muted); }
+    .mock-subtotal {
+      display: grid; grid-template-columns: 1fr 44px 54px;
+      padding: 4px 6px; background: var(--primary-lt);
+      font-size: 7px; font-weight: 700; color: var(--primary);
+      border-top: 1px solid var(--border);
+    }
+    .mock-subtotal span:last-child { text-align: right; }
+    .mock-cash-bar {
+      background: var(--primary); color: #fff;
+      padding: 5px 8px; font-size: 7.5px; font-weight: 700;
+      display: flex; justify-content: space-between;
+    }
+    .mock-section-hd { font-size: 6px; font-weight: 700; text-transform: uppercase; color: var(--muted); padding: 5px 6px 2px; }
+    .mock-lock-btn {
+      display: block; text-align: center;
+      background: var(--success); color: #fff;
+      border-radius: 4px; padding: 5px; font-size: 7px; font-weight: 700;
+      margin: 6px;
+    }
+    .mock-waiting { font-size: 7px; color: var(--muted); text-align: center; padding: 4px 6px; }
+
+    /* Check list */
+    .mock-check-item {
+      display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 4px 6px; margin-bottom: 4px; font-size: 7px; background: #fff;
+    }
+    .mock-check-item.confirmed { border-color: #a8d5bb; background: var(--success-lt); }
+    .mock-check-item.flagged   { border-color: #f5b8b3; background: var(--danger-lt); }
+    .mock-tag {
+      font-size: 6px; font-weight: 700; padding: 1px 5px;
+      border-radius: 8px; margin-left: auto;
+    }
+    .mock-tag.ok   { background: var(--success-lt); color: var(--success); border: 1px solid #a8d5bb; }
+    .mock-tag.wait { background: var(--warn-lt);    color: var(--warn);    border: 1px solid #e6d080; }
+    .mock-tag.bad  { background: var(--danger-lt);  color: var(--danger);  border: 1px solid #f5b8b3; }
+    .mock-confirm-btn {
+      font-size: 6px; font-weight: 700; padding: 2px 6px;
+      background: var(--success); color: #fff; border-radius: 3px; margin-left: auto;
+    }
+    .mock-flag-btn {
+      font-size: 6px; font-weight: 700; padding: 2px 6px;
+      background: #fff; color: var(--warn); border: 1px solid #e6d080; border-radius: 3px;
+    }
+
+    /* Compare table */
+    .mock-compare-tbl {
+      width: 100%; border-collapse: collapse; font-size: 7px;
+      border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    }
+    .mock-compare-tbl th {
+      background: var(--primary-lt); color: var(--primary);
+      padding: 3px 5px; font-size: 6px; text-align: center; font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-compare-tbl td { padding: 3px 5px; border-bottom: 1px solid #f0ede8; text-align: center; }
+    .mock-compare-tbl td:first-child { text-align: left; font-weight: 600; }
+    .row-ok   td { background: var(--success-lt); color: #155c2d; }
+    .row-bad  td { background: var(--danger-lt);  color: var(--danger); font-weight: 700; }
+    .mock-summary-ok  { background: var(--success-lt); color: var(--success); border: 1px solid #a8d5bb; border-radius: 5px; padding: 5px 8px; font-size: 7px; font-weight: 700; text-align: center; margin-bottom: 5px; }
+    .mock-summary-bad { background: var(--danger-lt);  color: var(--danger);  border: 1px solid #f5b8b3; border-radius: 5px; padding: 5px 8px; font-size: 7px; font-weight: 700; text-align: center; margin-bottom: 5px; }
+    .mock-submit-btn {
+      display: block; text-align: center;
+      background: var(--primary); color: #fff;
+      border-radius: 4px; padding: 5px; font-size: 7px; font-weight: 700; margin: 4px 6px;
+    }
+    .mock-unlock-btn {
+      display: block; text-align: center;
+      background: #fff; color: var(--primary); border: 1px solid var(--primary);
+      border-radius: 4px; padding: 4px; font-size: 7px; font-weight: 700; margin: 4px 6px;
+    }
+    .mock-grand-bar {
+      background: var(--primary); color: #fff;
+      padding: 5px 8px; font-size: 7.5px; font-weight: 700;
+      display: flex; justify-content: space-between; margin-top: 4px;
+    }
+
+    /* Caption under phone */
+    .phone-caption { text-align: center; font-size: .75rem; color: var(--muted); margin-top: 6px; font-style: italic; }
+    .two-label { text-align: center; font-size: .78rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+  <div class="guide-header">
+    <img src="CornerstoneLogo.jpg" alt="Cornerstone Community Church" style="width:160px;max-width:70%;height:auto;display:block;margin:0 auto 14px;border-radius:10px;background:#fff;padding:8px">
+    <h1>Offering Count — User Guide</h1>
+    <p>Step-by-step instructions for the counting team</p>
+  </div>
+
+  <!-- ── Overview ── -->
+  <div class="section">
+    <div class="section-title">Overview</div>
+    <div class="callout info">
+      <div class="icon">ℹ️</div>
+      <div class="callout-body">
+        <strong>How it works</strong>
+        <p>Two counters each open the app on their own device and enter quantities independently. Neither can see the other's entries until both have locked their count. The app then compares the two counts side by side and highlights any differences. The offering can only be submitted when both counts fully agree.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Session Flow ── -->
+  <div class="section">
+    <div class="section-title">Session Flow</div>
+    <div class="flow">
+      <div class="flow-box blue">Both counters open the app &amp; enter their names</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box blue">Lobby — wait for each other to join</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box blue">Each counter enters quantities independently</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box blue">Each counter locks their count</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box green">Counts match → Submit button appears</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box green">Submit → Email sent to Thomas</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 1 — Name Entry
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 1 — Enter Your Name &amp; Join</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      Each counter opens the app on their own phone or tablet and types their name, then taps <strong>Join Session</strong>.
+    </p>
+
+    <div class="phone-row">
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header">
+              <img src="CornerstoneLogo.jpg" alt="logo" style="width:36px;height:auto;display:block;margin:0 auto 6px;border-radius:4px">
+              <h2>Offering Count</h2>
+              <p>Internal counting sheet</p>
+            </div>
+            <div class="ps-body">
+              <div class="phone-label">Your name</div>
+              <div class="phone-input">Penny Divine</div>
+              <div class="phone-btn primary">Join Session</div>
+              <div class="phone-hint">Having trouble? Clear all counters to start fresh.</div>
+              <div class="phone-btn danger">Clear All Counters</div>
+              <div class="phone-link">📋 View Instructions</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-caption">Counter 1's device</div>
+      </div>
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header">
+              <img src="CornerstoneLogo.jpg" alt="logo" style="width:36px;height:auto;display:block;margin:0 auto 6px;border-radius:4px">
+              <h2>Offering Count</h2>
+              <p>Internal counting sheet</p>
+            </div>
+            <div class="ps-body">
+              <div class="phone-label">Your name</div>
+              <div class="phone-input">Joe Bucks</div>
+              <div class="phone-btn primary">Join Session</div>
+              <div class="phone-hint">Having trouble? Clear all counters to start fresh.</div>
+              <div class="phone-btn danger">Clear All Counters</div>
+              <div class="phone-link">📋 View Instructions</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-caption">Counter 2's device</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 2 — Lobby
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 2 — Lobby (Waiting for Each Other)</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      After joining, you see a waiting screen. Once both counters have joined, the app automatically moves to the count entry screen.
+    </p>
+
+    <div class="phone-row">
+      <!-- One person joined -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header" style="text-align:left">
+              <h2>Today's Session</h2>
+              <p>Sunday, April 13, 2025</p>
+            </div>
+            <div class="ps-body">
+              <div class="phone-lobby-card">
+                <div class="phone-lobby-title">Counters joined</div>
+                <div class="phone-counter-row"><span class="dot green"></span> Penny Divine <span class="phone-you">(you)</span></div>
+                <div class="phone-counter-row"><span class="dot gray"></span> <span style="color:var(--muted)">Waiting…</span></div>
+              </div>
+              <div class="phone-spin-row">⏳ Waiting for the second counter to join…</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-caption">Only 1 counter joined</div>
+      </div>
+      <!-- Both joined -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header" style="text-align:left">
+              <h2>Today's Session</h2>
+              <p>Sunday, April 13, 2025</p>
+            </div>
+            <div class="ps-body">
+              <div class="phone-lobby-card">
+                <div class="phone-lobby-title">Counters joined</div>
+                <div class="phone-counter-row"><span class="dot green"></span> Penny Divine <span class="phone-you">(you)</span></div>
+                <div class="phone-counter-row"><span class="dot green"></span> Joe Bucks</div>
+              </div>
+              <div class="phone-spin-row" style="color:var(--success);font-weight:700">✓ Both counters joined — moving to count…</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-caption">Both joined — advancing automatically</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 3 — Count Entry
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 3 — Enter Your Quantities</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      Count each denomination and type the number in the Quantity column. The Total calculates automatically. <strong>You cannot see the other counter's entries at this stage.</strong>
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-label">Count Entry Screen — Bills section</div>
+      <div class="mockup-body" style="padding:0">
+        <div class="mock-denom-hdr">
+          <span>Denomination</span><span>Quantity</span><span>Total</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$100</span>
+          <input class="mock-qty-input" value="2" readonly>
+          <span class="mock-total">$200.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$50</span>
+          <input class="mock-qty-input" value="5" readonly>
+          <span class="mock-total">$250.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$20</span>
+          <input class="mock-qty-input" value="14" readonly>
+          <span class="mock-total">$280.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$10</span>
+          <input class="mock-qty-input" value="3" readonly>
+          <span class="mock-total">$30.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$5</span>
+          <input class="mock-qty-input" value="6" readonly>
+          <span class="mock-total">$30.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$2</span>
+          <input class="mock-qty-input" value="" readonly placeholder="0">
+          <span class="mock-total">$0.00</span>
+        </div>
+        <div class="mock-denom-row">
+          <span>$1</span>
+          <input class="mock-qty-input" value="8" readonly>
+          <span class="mock-total">$8.00</span>
+        </div>
+        <div class="mock-subtotal">
+          <span>Bills subtotal</span><span></span><span>$798.00</span>
+        </div>
+        <div class="mock-cash-bar">
+          <span>Cash Total</span><span>$811.75</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">
+      ↑ Type the number of bills in each Quantity box. Leave blank if you have none. The Total and Cash Total update as you type.
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 4 — Checks
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 4 — Entering &amp; Confirming Checks</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      Either counter can add checks. The <em>other</em> counter must confirm each one. A counter cannot confirm their own entry.
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-label">Check List — as seen on each device</div>
+      <div class="mockup-body">
+
+        <!-- Pending (enterer's view) -->
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;">As seen by Penny (who entered the checks):</div>
+        <div class="mock-check-item">
+          <span style="font-weight:700">#1042</span>
+          <span style="color:var(--muted)">$250.00</span>
+          <span class="mock-tag wait">Awaiting confirmation</span>
+        </div>
+        <div class="mock-check-item confirmed">
+          <span style="font-weight:700">#1043</span>
+          <span style="color:var(--muted)">$75.00</span>
+          <span class="mock-tag ok">✓ Confirmed</span>
+        </div>
+
+        <div style="border-top:1px solid var(--border);margin:10px 0"></div>
+
+        <!-- Confirmer's view -->
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;">As seen by Joe (the confirming counter):</div>
+        <div class="mock-check-item">
+          <span style="font-weight:700">#1042</span>
+          <span style="color:var(--muted)">$250.00</span>
+          <span class="mock-confirm-btn">Confirm</span>
+          <span class="mock-flag-btn">Flag as Wrong</span>
+        </div>
+        <div class="mock-check-item confirmed">
+          <span style="font-weight:700">#1043</span>
+          <span style="color:var(--muted)">$75.00</span>
+          <span class="mock-tag ok">✓ Confirmed</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:8px;">
+      ↑ Joe sees <strong>Confirm</strong> and <strong>Flag as Wrong</strong> buttons. Penny only sees the status tag — she cannot confirm her own checks.
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 5 — Lock
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 5 — Lock Your Count</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      When you have finished entering all quantities, tap <strong>Lock My Count</strong>. Your entries are saved and your inputs are disabled. Wait for the other counter to lock.
+    </p>
+
+    <div class="phone-row">
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header" style="text-align:left;padding:6px 10px 4px;">
+              <h2>Your Count</h2>
+              <p style="font-size:7px">Penny Divine</p>
+            </div>
+            <div style="padding:4px 6px">
+              <div class="mock-section-hd">Bills</div>
+              <!-- abbreviated rows -->
+              <div class="mock-denom-row" style="font-size:7px"><span>$100</span><input class="mock-qty-input" value="2" readonly><span class="mock-total">$200.00</span></div>
+              <div class="mock-denom-row" style="font-size:7px"><span>$50</span><input class="mock-qty-input" value="5" readonly><span class="mock-total">$250.00</span></div>
+            </div>
+            <div class="mock-lock-btn">Lock My Count</div>
+          </div>
+        </div>
+        <div class="phone-caption">Ready to lock</div>
+      </div>
+      <div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="ps-header" style="text-align:left;padding:6px 10px 4px;">
+              <h2>Your Count</h2>
+              <p style="font-size:7px">Penny Divine</p>
+            </div>
+            <div style="padding:4px 6px">
+              <div class="mock-section-hd">Bills</div>
+              <div class="mock-denom-row" style="font-size:7px"><span>$100</span><input class="mock-qty-input" value="2" readonly disabled style="background:#f0f0ea;color:#aaa"><span class="mock-total">$200.00</span></div>
+              <div class="mock-denom-row" style="font-size:7px"><span>$50</span><input class="mock-qty-input" value="5" readonly disabled style="background:#f0f0ea;color:#aaa"><span class="mock-total">$250.00</span></div>
+            </div>
+            <div class="mock-waiting">✓ Locked. Waiting for Joe to lock…</div>
+          </div>
+        </div>
+        <div class="phone-caption">After locking — inputs disabled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 6 — Comparison: All Match
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 6A — Comparison: All Counts Match</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      When both counters are locked the app shows a side-by-side comparison. <strong>Green rows mean the counts agree.</strong> When every row is green and all checks are confirmed, the Submit button appears.
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-label">Comparison screen — all matching</div>
+      <div class="mockup-body" style="padding:10px">
+        <div class="mock-summary-ok">✓ All denominations match!</div>
+        <table class="mock-compare-tbl">
+          <thead>
+            <tr>
+              <th rowspan="2">Denom</th>
+              <th colspan="2" style="background:#eef4fb">Penny Divine</th>
+              <th colspan="2" style="background:#f3effe">Joe Bucks</th>
+              <th rowspan="2">Match</th>
+            </tr>
+            <tr>
+              <th style="background:#eef4fb">Qty</th><th style="background:#eef4fb">Total</th>
+              <th style="background:#f3effe">Qty</th><th style="background:#f3effe">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-ok"><td>$100</td><td>2</td><td>$200.00</td><td>2</td><td>$200.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$50</td><td>5</td><td>$250.00</td><td>5</td><td>$250.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$20</td><td>14</td><td>$280.00</td><td>14</td><td>$280.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$10</td><td>3</td><td>$30.00</td><td>3</td><td>$30.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$5</td><td>6</td><td>$30.00</td><td>6</td><td>$30.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$1</td><td>8</td><td>$8.00</td><td>8</td><td>$8.00</td><td>✓</td></tr>
+          </tbody>
+        </table>
+        <div class="mock-grand-bar" style="margin-top:6px"><span>Grand Total</span><span>$1,136.75</span></div>
+        <div class="mock-submit-btn">Submit Offering</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 6B — Comparison: Mismatch
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Step 6B — Comparison: Mismatch Found</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      <strong>Red rows</strong> mean the two counts differ. The Submit button will not appear. The counter with the wrong number must tap <strong>Unlock My Count</strong>, physically recount that denomination, correct the entry, and lock again.
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-label">Comparison screen — mismatch on $50</div>
+      <div class="mockup-body" style="padding:10px">
+        <div class="mock-summary-bad">1 mismatch — please recount highlighted rows</div>
+        <table class="mock-compare-tbl">
+          <thead>
+            <tr>
+              <th rowspan="2">Denom</th>
+              <th colspan="2" style="background:#eef4fb">Penny Divine</th>
+              <th colspan="2" style="background:#f3effe">Joe Bucks</th>
+              <th rowspan="2">Match</th>
+            </tr>
+            <tr>
+              <th style="background:#eef4fb">Qty</th><th style="background:#eef4fb">Total</th>
+              <th style="background:#f3effe">Qty</th><th style="background:#f3effe">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-ok"><td>$100</td><td>2</td><td>$200.00</td><td>2</td><td>$200.00</td><td>✓</td></tr>
+            <tr class="row-bad"><td>$50</td><td>5</td><td>$250.00</td><td>4</td><td>$200.00</td><td>✗</td></tr>
+            <tr class="row-ok"><td>$20</td><td>14</td><td>$280.00</td><td>14</td><td>$280.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$10</td><td>3</td><td>$30.00</td><td>3</td><td>$30.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$5</td><td>6</td><td>$30.00</td><td>6</td><td>$30.00</td><td>✓</td></tr>
+            <tr class="row-ok"><td>$1</td><td>8</td><td>$8.00</td><td>8</td><td>$8.00</td><td>✓</td></tr>
+          </tbody>
+        </table>
+        <div class="mock-unlock-btn">Unlock My Count</div>
+        <p style="font-size:.72rem;color:var(--danger);text-align:center;padding:0 6px 4px;">Submit button hidden until mismatch is resolved</p>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:12px">
+      <div class="icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Important — always physically recount</strong>
+        <p>Do not simply change your number to match the other counter. Pick up the bills again, recount them, and enter what you physically counted. This protects the integrity of the count.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       Check flagging
+  ═════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">When a Check Entry is Wrong</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">
+      If a check looks incorrect, the confirming counter taps <strong>Flag as Wrong</strong>. The check turns red and an edit form appears for the original enterer to correct it.
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-label">Check flagged — Joe flags, Penny corrects</div>
+      <div class="mockup-body">
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;">Joe's view — he flags the wrong amount:</div>
+        <div class="mock-check-item">
+          <span style="font-weight:700">#1042</span>
+          <span style="color:var(--muted)">$250.00</span>
+          <span class="mock-confirm-btn">Confirm</span>
+          <span class="mock-flag-btn">Flag as Wrong</span>
+        </div>
+
+        <div style="border-top:1px solid var(--border);margin:10px 0"></div>
+
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;">Penny's view after it is flagged — edit form appears:</div>
+        <div class="mock-check-item flagged" style="flex-direction:column;align-items:stretch;gap:6px">
+          <span class="mock-tag bad" style="margin-left:0;width:fit-content">⚠ Flagged — please correct</span>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <input class="mock-qty-input" value="1042" readonly style="width:60px;font-size:7px">
+            <input class="mock-qty-input" value="150.00" readonly style="width:60px;font-size:7px">
+            <span class="mock-confirm-btn" style="background:var(--primary)">Save</span>
+            <span style="font-size:7px;color:var(--danger)">Delete</span>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border);margin:10px 0"></div>
+
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;">After Penny saves — Joe can now confirm the corrected entry:</div>
+        <div class="mock-check-item">
+          <span style="font-weight:700">#1042</span>
+          <span style="color:var(--muted)">$150.00</span>
+          <span class="mock-confirm-btn">Confirm</span>
+          <span class="mock-flag-btn">Flag as Wrong</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Button Reference ── -->
+  <div class="section">
+    <div class="section-title">Button Reference</div>
+    <table>
+      <thead>
+        <tr><th>Button</th><th>Who can use it</th><th>What it does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Join Session</strong></td><td>Each counter on their own device</td><td>Connects you to today's counting session</td></tr>
+        <tr><td><strong>Add</strong> (check)</td><td>Either counter</td><td>Adds a check to the shared list</td></tr>
+        <tr><td><strong>Confirm</strong> (check)</td><td>The counter who did NOT enter the check</td><td>Verifies the check number and amount are correct</td></tr>
+        <tr><td><strong>Flag as Wrong</strong></td><td>The counter who did NOT enter the check</td><td>Sends the check back to the enterer for correction</td></tr>
+        <tr><td><strong>Lock My Count</strong></td><td>Each counter independently</td><td>Saves and locks your entries; triggers comparison when both are locked</td></tr>
+        <tr><td><strong>Unlock My Count</strong></td><td>Either counter (only visible when mismatches exist)</td><td>Returns you to entry screen to correct a denomination</td></tr>
+        <tr><td><strong>Submit Offering</strong></td><td>Either counter (only visible when all match)</td><td>Sends the count summary email to Thomas</td></tr>
+        <tr><td><strong>Save Count Sheet Image</strong></td><td>Either counter (submitted screen)</td><td>Generates and saves a PNG image of the full count sheet</td></tr>
+        <tr><td><strong>Text Thomas</strong></td><td>Either counter (submitted screen, mobile only)</td><td>Attaches the count sheet image to a message; Thomas's number is copied to your clipboard — paste it into the To: field</td></tr>
+        <tr><td><strong>Done / Sign Out</strong></td><td>Either counter (submitted screen)</td><td>Signs you out after the session is complete</td></tr>
+        <tr><td><strong>Reset Session</strong></td><td>Either counter</td><td>Clears all quantities and checks but keeps both counters in the session</td></tr>
+        <tr><td><strong>Clear All Counters</strong></td><td>Either counter</td><td>Removes all participants and fully resets the session — all open tabs are sent back to the name entry screen</td></tr>
+        <tr><td><strong>Start Over</strong></td><td>Either counter</td><td>Signs you out of the current session on your device only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Troubleshooting ── -->
+  <div class="section">
+    <div class="section-title">Troubleshooting</div>
+    <div class="callout danger">
+      <div class="icon">📵</div>
+      <div class="callout-body">
+        <strong>Offline banner appears at the top</strong>
+        <p>The app requires internet to sync between devices. Check your Wi-Fi or mobile data connection. Entries made while offline will sync automatically when you reconnect.</p>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="icon">🔄</div>
+      <div class="callout-body">
+        <strong>App seems frozen or stuck</strong>
+        <p>Refresh the page. The app will automatically rejoin your session and restore your entries. If both counters are stuck, one counter can tap <strong>Reset Session</strong> to start the count over, or <strong>Clear All Counters</strong> to remove everyone and start fresh.</p>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="icon">👤</div>
+      <div class="callout-body">
+        <strong>A third person accidentally joined</strong>
+        <p>The app blocks a third counter from joining. If it happens due to a device issue, tap <strong>Clear All Counters</strong> on the name entry screen, then have only the two correct counters re-join.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Internal Controls ── -->
+  <div class="section">
+    <div class="section-title">Internal Controls Reminder</div>
+    <div class="callout success">
+      <div class="icon">✅</div>
+      <div class="callout-body">
+        <strong>These rules protect the integrity of the count</strong>
+        <ul>
+          <li>Always count independently — do not share your totals with the other counter before locking.</li>
+          <li>Do not change your quantity to match the other counter without physically recounting.</li>
+          <li>A counter cannot confirm their own check entries.</li>
+          <li>The offering cannot be submitted until both independent counts fully agree.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:#aaa;font-size:.78rem;margin-top:32px;">
+    Church Offering Count App &nbsp;·&nbsp; For internal use only
+  </p>
+
+</div>
+</body>
+</html>

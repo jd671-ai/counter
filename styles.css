@@ -151,8 +151,27 @@ input:focus, select:focus {
 .tab-content.hidden { display: none; }
 
 /* ─── Profile Screen ─────────────────────────────────────────────────────── */
-.app-logo { text-align: center; padding: 32px 0 28px; }
-.app-logo-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 8px; }
+.profile-divider {
+  border-top: 1px solid var(--border); margin: 24px 0 16px;
+}
+.app-logo { text-align: center; padding: 20px 0 16px; }
+.clear-hint { font-size: .78rem; color: var(--text-muted); text-align: center; margin: 20px 0 8px; }
+.instructions-link {
+  display: block; text-align: center; margin-top: 20px;
+  font-size: .88rem; font-weight: 600; color: var(--primary);
+  text-decoration: none;
+}
+.instructions-link:hover { text-decoration: underline; }
+.app-logo-img {
+  width: 75vw;
+  max-width: 240px;
+  height: auto;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 .app-title { font-size: 1.75rem; font-weight: 800; color: var(--text); }
 .app-subtitle { color: var(--text-muted); font-size: .9rem; margin-top: 4px; }
 
@@ -244,6 +263,7 @@ input:focus, select:focus {
   outline: none;
 }
 .qty-input:disabled { background: var(--bg); color: var(--text-muted); }
+.qty-input.mismatch:not(:disabled) { background: #fff3cd; border-color: #e6a817; }
 
 .denom-row-total {
   text-align: right; font-size: .95rem; font-weight: 500;
@@ -290,6 +310,15 @@ input:focus, select:focus {
 }
 .tag-confirmed { background: var(--match-bg); color: var(--success); border: 1px solid var(--match-border); }
 .tag-pending   { background: var(--warn-lt);  color: var(--warn);    border: 1px solid #e6d080; }
+.tag-flagged   { background: var(--danger-lt); color: var(--danger); border: 1px solid var(--mismatch-bdr); }
+.check-item.flagged { border-color: var(--mismatch-bdr); background: var(--mismatch-bg); }
+.check-edit-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; width: 100%; }
+.btn-flag-check {
+  background: none; color: var(--warn); border: 1px solid #e6d080;
+  border-radius: var(--radius-sm); padding: 4px 10px;
+  font-size: .78rem; font-weight: 600; margin-left: auto;
+}
+.btn-flag-check:hover { background: var(--warn-lt); }
 .btn-confirm-check {
   background: var(--success); color: #fff;
   border-radius: var(--radius-sm); padding: 4px 12px;
@@ -395,3 +424,4 @@ input:focus, select:focus {
   letter-spacing: .08em; color: var(--text-muted); margin-bottom: 6px; }
 .submitted-grand-total { font-size: 2rem; font-weight: 800; color: var(--success); }
 .submitted-note { color: var(--text-muted); font-size: .875rem; margin-bottom: 24px; }
+.submitted-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; }
