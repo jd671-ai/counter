@@ -106,7 +106,7 @@ async function joinSession(sid, user) {
 
   // New user — block a third person from joining.
   if (ids.length >= 2) {
-    return { ok: false, err: 'This session already has 2 counters. Please wait until next Sunday.' };
+    return { ok: false, err: 'This session already has 2 counters. Tap "Clear All Counters" to start fresh.' };
   }
 
   await updateDoc(ref, {
