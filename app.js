@@ -735,8 +735,8 @@ function renderCheckList(checks, myId) {
         <div class="check-item flagged" data-id="${escHtml(c.id)}">
           <span class="check-status-tag tag-flagged">⚠ Flagged — please correct</span>
           <div class="check-edit-row">
-            <input type="text" class="check-num-field edit-num" value="${escHtml(c.checkNumber)}" maxlength="20" placeholder="Check #">
-            <input type="number" class="check-amt-field edit-amt" value="${(c.amount / 100).toFixed(2)}" min="0" step="0.01" placeholder="0.00">
+            <input type="text" class="check-num-field edit-num" value="${escHtml(c.checkNumber)}" maxlength="5" placeholder="Check #">
+            <input type="number" class="check-amt-field edit-amt" value="${(c.amount / 100).toFixed(2)}" min="0" step="0.01" maxlength="7" placeholder="0.00">
             <button class="btn-secondary btn-sm btn-save-check" data-id="${escHtml(c.id)}">Save</button>
             <button class="btn-remove-check" data-id="${escHtml(c.id)}">Delete</button>
           </div>
@@ -917,8 +917,8 @@ function renderCompareScreen(data) {
           <div class="check-item flagged" data-id="${escHtml(c.id)}">
             <span class="check-status-tag tag-flagged">⚠ Flagged — please correct</span>
             <div class="check-edit-row">
-              <input type="text" class="check-num-field edit-num" value="${escHtml(c.checkNumber)}" maxlength="20" placeholder="Check #" inputmode="numeric" pattern="[0-9]*">
-              <input type="text" class="check-amt-field edit-amt" value="${(c.amount / 100).toFixed(2)}" inputmode="decimal" pattern="[0-9.]*" placeholder="0.00">
+              <input type="text" class="check-num-field edit-num" value="${escHtml(c.checkNumber)}" maxlength="5" placeholder="Check #" inputmode="numeric" pattern="[0-9]*">
+              <input type="text" class="check-amt-field edit-amt" value="${(c.amount / 100).toFixed(2)}" maxlength="7" inputmode="decimal" pattern="[0-9.]*" placeholder="0.00">
               <button class="btn-secondary btn-sm btn-save-check" data-id="${escHtml(c.id)}">Save</button>
               <button class="btn-remove-check" data-id="${escHtml(c.id)}">Delete</button>
             </div>

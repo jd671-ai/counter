@@ -290,8 +290,8 @@ input:focus, select:focus {
 .add-check-row {
   display: flex; gap: 8px; margin-bottom: 12px; align-items: center;
 }
-.check-num-field { flex: 0 0 80px; }
-.check-amt-field { flex: 1; min-width: 90px; }
+.check-num-field { flex: 0 0 70px; min-width: 0; }
+.check-amt-field { flex: 0 0 100px; min-width: 0; }
 .add-check-row .btn-secondary { flex-shrink: 0; }
 
 .check-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
