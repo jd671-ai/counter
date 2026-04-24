@@ -10,8 +10,8 @@ import { firebaseConfig } from './firebase-config.js';
 const EMAILJS_PUBLIC_KEY  = 'xIicYRDTu2HLulENo';
 const EMAILJS_SERVICE_ID  = 'service_nwil4a1';
 const EMAILJS_TEMPLATE_ID = 'template_gukzkye';
-const TREASURER_EMAIL     = 'imetthomas@gmail.com';
-const THOMAS_PHONE        = '7024965338'; 
+const TREASURER_EMAIL     = 'jd.ccclv@gmail.com';
+const THOMAS_PHONE        = '7023389246'; 
 
 // ─── Denominations ────────────────────────────────────────────────────────────
 // valueCents = denomination value in integer cents (avoids floating-point drift)
@@ -378,7 +378,7 @@ function buildEmailHtml(data) {
     checksBody = checks.map((c, i) => {
       const bg = i % 2 === 1 ? 'background:#faf9f7;' : '';
       return `<tr style="${bg}">
-        <td style="${tdStyle}">#${c.checkNumber}</td>
+        <td style="${tdStyle}">#${escHtml(c.checkNumber)}</td>
         <td style="${tdRStyle}">${formatCents(c.amount)}</td>
       </tr>`;
     }).join('');
@@ -395,7 +395,7 @@ function buildEmailHtml(data) {
   <div style="background:${C_PRIMARY};border-radius:8px 8px 0 0;padding:20px 24px;">
     <div style="font-size:20px;font-weight:bold;color:#ffffff;">Offering Count Sheet</div>
     <div style="font-size:14px;color:rgba(255,255,255,0.8);margin-top:4px;">${dateLabel}</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px;">Counted by: ${ctrA.name} &amp; ${ctrB.name}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px;">Counted by: ${escHtml(ctrA.name)} &amp; ${escHtml(ctrB.name)}</div>
   </div>
 
   <!-- Bills -->
@@ -1422,6 +1422,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   btnJoin.addEventListener('click', async () => {
     const name = document.getElementById('entry-name').value.trim();
     if (!name) { showErrorIn('entry-error', 'Please enter your name.'); return; }
+    if (name.length > 50) { showErrorIn('entry-error', 'Name must be 50 characters or less.'); return; }
+    if (!/^[a-zA-Z\s'\-]+$/.test(name)) { showErrorIn('entry-error', 'Name can only contain letters, spaces, hyphens, and apostrophes.'); return; }
     clearErrorIn('entry-error');
     btnJoin.disabled = true;
     try {

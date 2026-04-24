@@ -290,8 +290,8 @@ input:focus, select:focus {
 .add-check-row {
   display: flex; gap: 8px; margin-bottom: 12px; align-items: center;
 }
-.check-num-field { flex: 0 0 110px; }
-.check-amt-field { flex: 1; }
+.check-num-field { flex: 0 0 80px; }
+.check-amt-field { flex: 1; min-width: 90px; }
 .add-check-row .btn-secondary { flex-shrink: 0; }
 
 .check-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -313,6 +313,7 @@ input:focus, select:focus {
 .tag-flagged   { background: var(--danger-lt); color: var(--danger); border: 1px solid var(--mismatch-bdr); }
 .check-item.flagged { border-color: var(--mismatch-bdr); background: var(--mismatch-bg); }
 .check-edit-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; width: 100%; }
+.check-edit-row button { flex-shrink: 0; }
 .btn-flag-check {
   background: none; color: var(--warn); border: 1px solid #e6d080;
   border-radius: var(--radius-sm); padding: 4px 10px;
