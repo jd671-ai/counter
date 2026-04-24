@@ -10,8 +10,8 @@ import { firebaseConfig } from './firebase-config.js';
 const EMAILJS_PUBLIC_KEY  = 'xIicYRDTu2HLulENo';
 const EMAILJS_SERVICE_ID  = 'service_nwil4a1';
 const EMAILJS_TEMPLATE_ID = 'template_gukzkye';
-const TREASURER_EMAIL     = 'imetthomas@gmail.com';
-const THOMAS_PHONE        = '7024965338'; 
+const TREASURER_EMAIL     = 'jd.ccclv@gmail.com';
+const THOMAS_PHONE        = '7023389246'; 
 
 // ─── Denominations ────────────────────────────────────────────────────────────
 // valueCents = denomination value in integer cents (avoids floating-point drift)
