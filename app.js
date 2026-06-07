@@ -55,14 +55,14 @@ let lastSeenReset      = 0;      // tracks resetCount so other device's reset tr
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function storeCurrentUser(user) {
-  sessionStorage.setItem('churchCounter_user', JSON.stringify(user));
+  localStorage.setItem('churchCounter_user', JSON.stringify(user));
 }
 function loadCurrentUser() {
-  const s = sessionStorage.getItem('churchCounter_user');
+  const s = localStorage.getItem('churchCounter_user');
   return s ? JSON.parse(s) : null;
 }
 function clearCurrentUser() {
-  sessionStorage.removeItem('churchCounter_user');
+  localStorage.removeItem('churchCounter_user');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
